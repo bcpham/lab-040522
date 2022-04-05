@@ -15,7 +15,7 @@ const WORDS = [
   'chocolate',
 ];
 
-const numWrong = 0;
+let numWrong = 0;
 
 // Loop over the chars in `word` and create divs.
 // The divs should be appended to the section with id="word-container".
@@ -65,11 +65,40 @@ const isLetterInWord = (letter) => {
 };
 
 const getRandomWord = (words) => {
-  const wordIndex = Math.floor(Math.random() * words.length);
-  const randomWord = words[wordIndex];
+  const wordIndex = Math.floor(Math.random() * words.length); //generates random integer as index
+  const randomWord = words[wordIndex]; //sets random word from dictionary words[index]
   console.log(randomWord);
   return randomWord;
 }
+// The solution had a sneaky one liner: const word = WORDS[Math.floor(Math.random() * WORDS.length)];
+
+const handleCorrectGuess = (letter) => {
+  // Replace this with your code
+  const letterBox = document.querySelectorAll(`.${letter}`);
+  
+  for (box of letterBox){
+    box.innerHTML = letter;
+  }
+  
+};
+
+const handleWrongGuess = () => {
+  if(numWrong === 4){
+    for (const button of document.querySelectorAll('button')) {
+      button.setAttribute('disabled', '');
+    }
+    document.querySelector('#play-again').style.display = '';
+  } else {
+    numWrong += 1;
+    const image = document.querySelector('img');
+    image.setAttribute('src', `/static/images/guess${numWrong}.png`);
+  }
+};
+
+const resetGame = () => {
+  window.location = '/sharkwords';  //like Flask, redirect
+};
+
 
 // This is like if __name__ == '__main__' in Python
 // It will be called when the file is run (because
@@ -79,7 +108,10 @@ const getRandomWord = (words) => {
   // You can change this to choose a random word from WORDS once you
   // finish this lab but we hard code it so we know what the word is
   // and can tell if things look correct for this word
+  
   // const word = 'hello';
+
+ 
 
   word = getRandomWord(WORDS);
 
@@ -91,6 +123,27 @@ const getRandomWord = (words) => {
   // Replace this line with the function call
   generateLetterButtons();
 
-  // in the next lab, you will be adding functionality to handle when
-  // someone clicks on a letter
+  for (const button of document.querySelectorAll('button')) {
+    // add an event handler to handle clicking on a letter button
+    // YOUR CODE HERE
+
+    button.addEventListener('click', () => {
+      const letter = button.innerHTML;
+      button.setAttribute('disabled', '');
+
+      if (word.includes(letter)) {
+        handleCorrectGuess(letter);
+      } else {
+        handleWrongGuess();
+      }
+    });
+  }
+
+  // add an event handler to handle clicking on the Play Again button
+  // YOUR CODE HERE
+  const playAgainButton = document.querySelector('#play-again');
+  playAgainButton.addEventListener('click', () => {
+    resetGame();
+  });
+
 })();
